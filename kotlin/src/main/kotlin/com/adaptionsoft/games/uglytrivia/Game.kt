@@ -5,8 +5,6 @@ import kotlin.collections.ArrayList
 
 class Game {
     var players = ArrayList<Player>()
-    var places = IntArray(6)
-    var purses = IntArray(6)
     var inPenaltyBox = BooleanArray(6)
 
     var popQuestions = LinkedList<Any>()
@@ -31,11 +29,9 @@ class Game {
     }
 
     fun add(playerName: String): Boolean {
-        players.add(Player(playerName, place = 0))
+        players.add(Player(playerName, place = 0, purse = 0))
 
 
-        places[playerCount()] = 0
-        purses[playerCount()] = 0
         inPenaltyBox[playerCount()] = false
 
         println(playerName + " was added")
@@ -54,7 +50,7 @@ class Game {
                 println(getPlayerName() + " is getting out of the penalty box")
                 movePlayer(roll)
 
-                println(getPlayerName() + "'s new location is " + places[currentPlayer])
+                println(getPlayerName() + "'s new location is " + currentPlace())
                 println("The category is " + currentCategory())
                 askQuestion()
             } else {
@@ -66,7 +62,7 @@ class Game {
 
             movePlayer(roll)
 
-            println(getPlayerName() + "'s new location is " + places[currentPlayer])
+            println(getPlayerName() + "'s new location is " + currentPlace())
             println("The category is " + currentCategory())
             askQuestion()
         }
@@ -74,9 +70,6 @@ class Game {
     }
 
     private fun movePlayer(roll: Int) {
-        places[currentPlayer] = places[currentPlayer] + roll
-        if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12
-
         val player = players[currentPlayer]
         move(player, roll)
     }
@@ -93,27 +86,28 @@ class Game {
     }
 
     private fun currentCategory(): String {
-        if (places[currentPlayer] == 0) return "Pop"
-        if (places[currentPlayer] == 4) return "Pop"
-        if (places[currentPlayer] == 8) return "Pop"
-        if (places[currentPlayer] == 1) return "Science"
-        if (places[currentPlayer] == 5) return "Science"
-        if (places[currentPlayer] == 9) return "Science"
-        if (places[currentPlayer] == 2) return "Sports"
-        if (places[currentPlayer] == 6) return "Sports"
-        if (places[currentPlayer] == 10) return "Sports"
+        if (currentPlace() == 0) return "Pop"
+        if (currentPlace() == 4) return "Pop"
+        if (currentPlace() == 8) return "Pop"
+        if (currentPlace() == 1) return "Science"
+        if (currentPlace() == 5) return "Science"
+        if (currentPlace() == 9) return "Science"
+        if (currentPlace() == 2) return "Sports"
+        if (currentPlace() == 6) return "Sports"
+        if (currentPlace() == 10) return "Sports"
         return "Rock"
+    }
+
+    private fun currentPlace(): Int {
+        return getCurrentPlayer().place
     }
 
     fun wasCorrectlyAnswered(): Boolean {
         if (inPenaltyBox[currentPlayer]) {
             if (isGettingOutOfPenaltyBox) {
                 println("Answer was correct!!!!")
-                purses[currentPlayer]++
-                println(getPlayerName()
-                        + " now has "
-                        + purses[currentPlayer]
-                        + " Gold Coins.")
+                addOneCoin()
+                println("${getPlayerName()} now has ${getPlayerCoins()} Gold Coins.")
 
                 val winner = didPlayerWin()
                 currentPlayer++
@@ -130,11 +124,8 @@ class Game {
         } else {
 
             println("Answer was corrent!!!!")
-            purses[currentPlayer]++
-            println(getPlayerName()
-                    + " now has "
-                    + purses[currentPlayer]
-                    + " Gold Coins.")
+            addOneCoin()
+            println("${getPlayerName()} now has ${getPlayerCoins()} Gold Coins.")
 
             val winner = didPlayerWin()
             currentPlayer++
@@ -142,6 +133,10 @@ class Game {
 
             return winner
         }
+    }
+
+    private fun addOneCoin() {
+        getCurrentPlayer().purse = getCurrentPlayer().purse + 1
     }
 
     fun wrongAnswer(): Boolean {
@@ -161,12 +156,16 @@ class Game {
     private fun playerCount() = players.size
 
     private fun didPlayerWin(): Boolean {
-        return purses[currentPlayer] != 6
+        return getPlayerCoins() != 6
+    }
+
+    private fun getPlayerCoins(): Int {
+        return getCurrentPlayer().purse
     }
 
 }
 
-data class Player(val playerName: String, var place: Int)
+data class Player(val playerName: String, var place: Int, var purse: Int)
 
 private fun move(player: Player, roll: Int) {
     player.place = player.place + roll
