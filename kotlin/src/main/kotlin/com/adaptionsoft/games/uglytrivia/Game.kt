@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class Game {
-    var NEWplayer = ArrayList<Player>()
+    var NEWplayers = ArrayList<Player>()
     var players = ArrayList<Any>()
     var places = IntArray(6)
     var purses = IntArray(6)
@@ -28,24 +28,21 @@ class Game {
     }
 
     fun isPlayable(): Boolean {
-        return howManyPlayers() >= 2
+        return playerCount() >= 2
     }
 
     fun add(playerName: String): Boolean {
+        NEWplayers.add(Player(playerName))
 
 
         players.add(playerName)
-        places[howManyPlayers()] = 0
-        purses[howManyPlayers()] = 0
-        inPenaltyBox[howManyPlayers()] = false
+        places[playerCount()] = 0
+        purses[playerCount()] = 0
+        inPenaltyBox[playerCount()] = false
 
         println(playerName + " was added")
-        println("They are player number " + players.size)
+        println("They are player number " + playerCount())
         return true
-    }
-
-    fun howManyPlayers(): Int {
-        return players.size
     }
 
     fun roll(roll: Int) {
@@ -116,12 +113,12 @@ class Game {
 
                 val winner = didPlayerWin()
                 currentPlayer++
-                if (currentPlayer == players.size) currentPlayer = 0
+                if (currentPlayer == playerCount()) currentPlayer = 0
 
                 return winner
             } else {
                 currentPlayer++
-                if (currentPlayer == players.size) currentPlayer = 0
+                if (currentPlayer == playerCount()) currentPlayer = 0
                 return true
             }
 
@@ -137,7 +134,7 @@ class Game {
 
             val winner = didPlayerWin()
             currentPlayer++
-            if (currentPlayer == players.size) currentPlayer = 0
+            if (currentPlayer == playerCount()) currentPlayer = 0
 
             return winner
         }
@@ -149,11 +146,17 @@ class Game {
         inPenaltyBox[currentPlayer] = true
 
         currentPlayer++
-        if (currentPlayer == players.size) currentPlayer = 0
+        if (currentPlayer == playerCount()) currentPlayer = 0
         return true
     }
+
+    private fun playerCount() = NEWplayers.size
 
     private fun didPlayerWin(): Boolean {
         return purses[currentPlayer] != 6
     }
+}
+
+class Player(playerName: String) {
+
 }
