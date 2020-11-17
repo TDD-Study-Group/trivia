@@ -5,7 +5,6 @@ import kotlin.collections.ArrayList
 
 class Game {
     var players = ArrayList<Player>()
-    var inPenaltyBox = BooleanArray(6)
 
     var popQuestions = LinkedList<Any>()
     var scienceQuestions = LinkedList<Any>()
@@ -29,10 +28,7 @@ class Game {
     }
 
     fun add(playerName: String): Boolean {
-        players.add(Player(playerName, place = 0, purse = 0))
-
-
-        inPenaltyBox[playerCount()] = false
+        players.add(Player(playerName, place = 0, purse = 0, inPenaltyBox = false))
 
         println(playerName + " was added")
         println("They are player number " + playerCount())
@@ -43,7 +39,7 @@ class Game {
         println(getPlayerName() + " is the current player")
         println("They have rolled a " + roll)
 
-        if (inPenaltyBox[currentPlayer]) {
+        if (isInPenaltyBox()) {
             if (roll % 2 != 0) {
                 isGettingOutOfPenaltyBox = true
 
@@ -59,7 +55,6 @@ class Game {
             }
 
         } else {
-
             movePlayer(roll)
 
             println(getPlayerName() + "'s new location is " + currentPlace())
@@ -103,20 +98,18 @@ class Game {
     }
 
     fun wasCorrectlyAnswered(): Boolean {
-        if (inPenaltyBox[currentPlayer]) {
+        if (isInPenaltyBox()) {
             if (isGettingOutOfPenaltyBox) {
                 println("Answer was correct!!!!")
                 addOneCoin()
                 println("${getPlayerName()} now has ${getPlayerCoins()} Gold Coins.")
 
                 val winner = didPlayerWin()
-                currentPlayer++
-                if (currentPlayer == playerCount()) currentPlayer = 0
+                nextPlayer()
 
                 return winner
             } else {
-                currentPlayer++
-                if (currentPlayer == playerCount()) currentPlayer = 0
+                nextPlayer()
                 return true
             }
 
@@ -128,11 +121,14 @@ class Game {
             println("${getPlayerName()} now has ${getPlayerCoins()} Gold Coins.")
 
             val winner = didPlayerWin()
-            currentPlayer++
-            if (currentPlayer == playerCount()) currentPlayer = 0
+            nextPlayer()
 
             return winner
         }
+    }
+
+    private fun isInPenaltyBox(): Boolean {
+        return getCurrentPlayer().inPenaltyBox
     }
 
     private fun addOneCoin() {
@@ -142,11 +138,15 @@ class Game {
     fun wrongAnswer(): Boolean {
         println("Question was incorrectly answered")
         println(getPlayerName() + " was sent to the penalty box")
-        inPenaltyBox[currentPlayer] = true
+        getCurrentPlayer().inPenaltyBox = true
 
+        nextPlayer()
+        return true
+    }
+
+    private fun nextPlayer() {
         currentPlayer++
         if (currentPlayer == playerCount()) currentPlayer = 0
-        return true
     }
 
     private fun getPlayerName() = getCurrentPlayer().playerName
@@ -165,7 +165,7 @@ class Game {
 
 }
 
-data class Player(val playerName: String, var place: Int, var purse: Int)
+data class Player(val playerName: String, var place: Int, var purse: Int, var inPenaltyBox: Boolean)
 
 private fun move(player: Player, roll: Int) {
     player.place = player.place + roll
