@@ -39,6 +39,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") {
         because("Cucumber relies on jupiter-engine to resolve tests")
     }
+    testImplementation("com.github.stefanbirkner:system-lambda:1.1.1")
 }
 
 configure<JavaPluginConvention> {
