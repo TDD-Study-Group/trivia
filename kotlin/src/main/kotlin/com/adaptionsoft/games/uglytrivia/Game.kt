@@ -40,7 +40,7 @@ class Game {
         println("They have rolled a " + roll)
 
         if (isInPenaltyBox()) {
-            if (roll % 2 != 0) {
+            if (isOdd(roll)) {
                 isGettingOutOfPenaltyBox = true
 
                 println(getPlayerName() + " is getting out of the penalty box")
@@ -64,9 +64,12 @@ class Game {
 
     }
 
+    private fun isOdd(roll: Int) = roll % 2 != 0
+
     private fun movePlayer(roll: Int) {
         val player = players[currentPlayer]
-        move(player, roll)
+        player.place = player.place + roll
+        if (player.place > 11) player.place = player.place - 12
     }
 
     private fun askQuestion() {
@@ -104,10 +107,10 @@ class Game {
                 addOneCoin()
                 println("${getPlayerName()} now has ${getPlayerCoins()} Gold Coins.")
 
-                val winner = didPlayerWin()
+                val lessThanSixCoins = getPlayerCoins() != 6
                 nextPlayer()
 
-                return winner
+                return lessThanSixCoins
             } else {
                 nextPlayer()
                 return true
@@ -120,10 +123,10 @@ class Game {
             addOneCoin()
             println("${getPlayerName()} now has ${getPlayerCoins()} Gold Coins.")
 
-            val winner = didPlayerWin()
+            val lessThanSixCoins = getPlayerCoins() != 6
             nextPlayer()
 
-            return winner
+            return lessThanSixCoins
         }
     }
 
@@ -155,10 +158,6 @@ class Game {
 
     private fun playerCount() = players.size
 
-    private fun didPlayerWin(): Boolean {
-        return getPlayerCoins() != 6
-    }
-
     private fun getPlayerCoins(): Int {
         return getCurrentPlayer().purse
     }
@@ -167,7 +166,3 @@ class Game {
 
 data class Player(val playerName: String, var place: Int, var purse: Int, var inPenaltyBox: Boolean)
 
-private fun move(player: Player, roll: Int) {
-    player.place = player.place + roll
-    if (player.place > 11) player.place = player.place - 12
-}
