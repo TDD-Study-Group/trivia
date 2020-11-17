@@ -4,6 +4,7 @@ import com.adaptionsoft.games.trivia.runner.GameRunner
 import com.adaptionsoft.games.uglytrivia.Game
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut
 import org.approvaltests.Approvals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -11,14 +12,18 @@ class SomeTest {
     private val rand = Random(42)
 
     @Test
+    fun gameWithOutPlayerIsNotPossible() {
+        val game = Game()
+        Assertions.assertThrows(IndexOutOfBoundsException::class.java) { game.roll(2) }
+    }
+
+    @Test
     fun gameWithRandomPlayer() {
         val captured = tapSystemOut {
             repeat(5000) {
                 val aGame = Game().apply {
-                    val playerCount = rand.nextInt(6)
-                    if(playerCount != 0){
-                        (1..playerCount).forEach { i -> add("Name $i") }
-                    }
+                    val playerCount = rand.nextInt(5)
+                    (0..playerCount).forEach { i -> add("Name $i") }
                 }
                 do {
                     aGame.roll(rand.nextInt(5) + 1)

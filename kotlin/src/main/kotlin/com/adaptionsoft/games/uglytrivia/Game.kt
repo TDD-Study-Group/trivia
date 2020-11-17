@@ -1,8 +1,10 @@
 package com.adaptionsoft.games.uglytrivia
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 class Game {
+    var NEWplayer = ArrayList<Player>()
     var players = ArrayList<Any>()
     var places = IntArray(6)
     var purses = IntArray(6)
@@ -21,12 +23,8 @@ class Game {
             popQuestions.addLast("Pop Question " + i)
             scienceQuestions.addLast("Science Question " + i)
             sportsQuestions.addLast("Sports Question " + i)
-            rockQuestions.addLast(createRockQuestion(i))
+            rockQuestions.addLast("Rock Question " + i)
         }
-    }
-
-    fun createRockQuestion(index: Int): String {
-        return "Rock Question " + index
     }
 
     fun isPlayable(): Boolean {
@@ -62,9 +60,7 @@ class Game {
                 places[currentPlayer] = places[currentPlayer] + roll
                 if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12
 
-                println(players[currentPlayer].toString()
-                        + "'s new location is "
-                        + places[currentPlayer])
+                println(players[currentPlayer].toString() + "'s new location is " + places[currentPlayer])
                 println("The category is " + currentCategory())
                 askQuestion()
             } else {
@@ -77,9 +73,7 @@ class Game {
             places[currentPlayer] = places[currentPlayer] + roll
             if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12
 
-            println(players[currentPlayer].toString()
-                    + "'s new location is "
-                    + places[currentPlayer])
+            println(players[currentPlayer].toString() + "'s new location is " + places[currentPlayer])
             println("The category is " + currentCategory())
             askQuestion()
         }
