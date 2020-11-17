@@ -52,8 +52,7 @@ class Game {
                 isGettingOutOfPenaltyBox = true
 
                 println(getPlayerName() + " is getting out of the penalty box")
-                places[currentPlayer] = places[currentPlayer] + roll
-                if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12
+                movePlayer(roll)
 
                 println(getPlayerName() + "'s new location is " + places[currentPlayer])
                 println("The category is " + currentCategory())
@@ -65,14 +64,21 @@ class Game {
 
         } else {
 
-            places[currentPlayer] = places[currentPlayer] + roll
-            if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12
+            movePlayer(roll)
 
             println(getPlayerName() + "'s new location is " + places[currentPlayer])
             println("The category is " + currentCategory())
             askQuestion()
         }
 
+    }
+
+    private fun movePlayer(roll: Int) {
+        places[currentPlayer] = places[currentPlayer] + roll
+        if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12
+
+        val player = players[currentPlayer]
+        move(player, roll)
     }
 
     private fun askQuestion() {
@@ -157,6 +163,12 @@ class Game {
     private fun didPlayerWin(): Boolean {
         return purses[currentPlayer] != 6
     }
+
 }
 
 data class Player(val playerName: String, var place: Int)
+
+private fun move(player: Player, roll: Int) {
+    player.place = player.place + roll
+    if (player.place > 11) player.place = player.place - 12
+}
